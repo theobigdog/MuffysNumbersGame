@@ -74,7 +74,7 @@ def remove_primes(current_list : list) -> list:
         else:
             no_primes.append(x)
     return no_primes, primes
-
+'''
 def top_half_bigger(the_list : list) -> bool:
     return st.median(the_list) > st.median(numbers)
 
@@ -92,6 +92,7 @@ def add_remove_next(starting : list, no_primes : list, primes : list) -> list:
             finished = True
         counter += 1
     return finishing
+'''
 
 def get_factors(numbers : list) -> dict:
     factors = {}
@@ -111,17 +112,33 @@ def get_multiples(numbers : list) -> dict:
                 multiples[f'{number}'].append(number * multiple)
     return multiples
 
+def try_factor(numbers : list, number : int, factors : dict):
+    return
+
+def try_multiple(numbers : list, number : int, multiples : dict):
+    return
+
+def best_series(number : int, numbers : list, factors : dict, multiples : dict, primes : list, no_primes : list) -> list:
+    final = numbers.copy()
+    finished = False
+    counter = 0
+    current_best = []
+    while counter <= len(numbers) and not finished:
+        current = []
+        counter += 1
+    return final
+
 numbers = list(np.arange(1, max_cutoff + 1))
 
 no_primes, primes = remove_primes(numbers)
 
-print(f'starting numbers: {numbers}')
-print(f'no primes: {no_primes} {len(no_primes)}')
-print(f'primes: {primes} {len(primes)}')
+print(f'Starting Numbers: {numbers}')
+print(f'No Primes: {no_primes} {len(no_primes)}')
+print(f'Primes: {primes} {len(primes)}')
 
+'''
 final = []
 next_list = numbers.copy()
-
 for track in range(max_cutoff):
     length_before = len(next_list)
     next_list = add_remove_next(next_list, no_primes, primes)
@@ -130,74 +147,16 @@ for track in range(max_cutoff):
         break
     
 print(next_list)
-print('Factors: ', get_factors(numbers))
-print('Multiples: ', get_multiples(numbers))
 '''
-numbers = list(np.arange(1, prime_nums + 1, 1))
-print(numbers)
+factors = get_factors(numbers)
+multiples = get_multiples(numbers)
+print('Factors: ', factors)
+print('Multiples: ', multiples)
 
-initial_list = numbers.copy()
-spent_numbers = []
+number = random.randint(1,len(numbers))
+longest = best_series(number, numbers, factors, multiples, primes, no_primes)
+print('Number: ', number, 'Best Series: ', longest, 'Length: ', len(longest))
 
-count = 0
-current_index = -1 #len(initial_list) - 1
-print(current_index)
-current_value = initial_list[current_index]
-current_comparison = 0
-
-finished = False
-cant_go_up = False
-cant_go_down = False
-temp = 'holder'
-while count < len(numbers) and finished == False:
-    print(f'pre-temp = {temp}')
-    temp = initial_list.pop(current_index)
-    print(f'Post-temp = {temp}')
-    for i in range(len(initial_list)):
-        print('1st for')
-        if initial_list[-i - 1] < current_value:
-            print(f'i = {-i}')
-            for j in range(len(initial_list)):
-                print('second for')
-                current_comparison = initial_list[-j - 1]
-                current_value = j
-                print(current_comparison, initial_list, spent_numbers, current_value)
-                spent_numbers.append(temp)
-                if current_value % current_comparison == 0:
-                    print(f'j = {-j}')
-                    current_value = current_comparison
-                    current_index = len(initial_list) - j - 1  # not sure about this "- 1"
-                    break
-                else:
-                    print('pre current_value')
-                    current_comparison = initial_list[current_index - 1]
-                    print(current_comparison)
-        elif initial_list[-i - 1] > current_value:
-            for k in range(len(initial_list)):
-                print('3rd for')
-                current_comparison = initial_list[-k-1]
-                spent_numbers.append(temp)
-                if current_comparison % current_value == 0:
-                    print(f'k = {-k}')
-                    current_value = current_comparison
-                    current_index = len(initial_list) - k - 1
-                    break
-        elif initial_list[-i - 1] == current_value:
-            current_comparison = current_value #initial_list[current_index - 1]
-            current_index = int([x for x in initial_list if x == 6][0])
-            print('equality', current_comparison, current_value, current_index)
-            spent_numbers.append(temp)
-        else:
-            finished = True
-            print('finished')
-            break
-    count += 1
-
-# Final Summary
-
-print(count, spent_numbers, initial_list, len(initial_list)) ###, max_number in initial_list, max_number in spent_numbers) # This was for ealy testing to make sure the top number wasn't in the final array.  The cutoff will actually be one integer lower.  Saving just in case
-
-'''
 ##################  Check for prime numbers, and account for them in the code 
 
 ##################  Also, make a "Set" out of the final array, convert back to array and make sure the length of the array is consistent
