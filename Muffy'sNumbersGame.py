@@ -112,29 +112,79 @@ def get_multiples(numbers : list) -> dict:
                 multiples[f'{number}'].append(number * multiple)
     return multiples
 
-def try_factor(numbers : list, number : int, factors : dict):
-    return
+def try_factor(number : int, numbers_tracker : list, factors : dict):
+    best = 0
+    for factor in factors[f'{number}']:
+        if factor in numbers_tracker:
+            best = factor
+    return best
 
-def try_multiple(numbers : list, number : int, multiples : dict):
-    return
+def try_multiple(number : int, numbers_tracker : list, multiples : dict):
+    best = 0
+    for multiple in multiples[f'{number}']:
+        if multiple in numbers_tracker:
+            best = multiple
+    return best
 
-def best_series(number : int, numbers : list, factors : dict, multiples : dict, primes : list, no_primes : list) -> list:
-    final = numbers.copy()
-    finished = False
-    counter = 0
-    current_best = []
-    while counter <= len(numbers) and not finished:
+def recursive_check(number : int, numbers_tracker : list, factors : dict, multiples : dict, primes : list, no_primes : list, series : list) -> dict and list:
+    #median = st.median(numbers_tracker)
+    #number_done = False
+    best = 0
+    for factor in factors[f'{number}']:
+        curr = try_factor(factor, numbers_tracker, factors)
+        print('factor', factor, 'curr', curr, 'num_tracker', numbers_tracker)
+        if curr > best and curr in numbers_tracker:
+            best = curr
+    if best != 0:
+        ind = numbers_tracker.index(best)
+        numbers_tracker.pop(ind)
+        #del(numbers_tracker[ind])
+        series.append(best)
+        print('factor del', 'best', best, 'series', series, 'num_tracker', numbers_tracker)
+        recursive_check(best, numbers_tracker, factors, multiples, primes, no_primes, series)
+    elif best == 0:
+        for multiple in multiples[f'{number}']:
+            curr = try_multiple(multiple, numbers_tracker, multiples)
+            print('multiple', multiple, 'curr', curr, 'num_tracker', numbers_tracker)
+            if curr > best and curr in numbers_tracker:
+                best = curr
+        if best != 0:
+            ind = numbers_tracker.index(best)
+            numbers_tracker.pop(ind)
+            #del(numbers_tracker[ind])
+            series.append(best)
+            print('multiple del', 'best', best, 'series', series, 'num_tracker', numbers_tracker)
+            recursive_check(best, numbers_tracker, factors, multiples, primes, no_primes, series)
+    return numbers_tracker, series
+
+def best_series(numbers : list, factors : dict, multiples : dict, primes : list, no_primes : list) -> list:
+    #finished = False
+    #counter = 0
+    all_tracker = {}
+    #current_best = []
+
+    '''while counter <= len(numbers) and not finished:
         current = []
-        counter += 1
-    return final
+        number_best = []
+        counter += 1'''
+    
+    '''series = {'9' : [1,9,3,6,2,8,4], }'''
+    
+    for number in numbers:
+        numbers_tracker = numbers.copy()
+        series = []
+        tracker, best = recursive_check(number, numbers_tracker, factors, multiples, primes, no_primes, series)
+        all_tracker[f'{number}'] = best
+        print('Done with', number)
+    return all_tracker
 
 numbers = list(np.arange(1, max_cutoff + 1))
 
 no_primes, primes = remove_primes(numbers)
 
 print(f'Starting Numbers: {numbers}')
-print(f'No Primes: {no_primes} {len(no_primes)}')
-print(f'Primes: {primes} {len(primes)}')
+#print(f'No Primes: {no_primes} {len(no_primes)}')
+#print(f'Primes: {primes} {len(primes)}')
 
 '''
 final = []
@@ -153,9 +203,18 @@ multiples = get_multiples(numbers)
 print('Factors: ', factors)
 print('Multiples: ', multiples)
 
-number = random.randint(1,len(numbers))
-longest = best_series(number, numbers, factors, multiples, primes, no_primes)
-print('Number: ', number, 'Best Series: ', longest, 'Length: ', len(longest))
+#number = random.randint(1,len(numbers))
+summary = best_series(numbers, factors, multiples, primes, no_primes)
+best_num = 0
+best_series = []
+length = len(best_series)
+for number in summary:
+    if len(summary[f'{number}']) > length:
+        best_num = number
+        best_series = summary[f'{number}']
+        length = len(best_series)
+print('Summary: ', summary)
+print('Best Series:', best_num, ':', best_series, 'Length: ', length)
 
 ##################  Check for prime numbers, and account for them in the code 
 
