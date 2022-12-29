@@ -74,25 +74,6 @@ def remove_primes(current_list : list) -> list:
         else:
             no_primes.append(x)
     return no_primes, primes
-'''
-def top_half_bigger(the_list : list) -> bool:
-    return st.median(the_list) > st.median(numbers)
-
-def add_remove_next(starting : list, no_primes : list, primes : list) -> list:
-    curr = starting[-1]
-    finished = False
-    counter = 1
-    finishing = starting
-    while counter <= len(starting) and finished == False:
-        contender = starting[-counter]
-        print(f'contender: {contender}, curr: {curr}')
-        if curr != contender and curr % contender == 0 and not top_half_bigger(starting) and contender not in primes:
-            print('yep')
-            finishing.pop(-counter)
-            finished = True
-        counter += 1
-    return finishing
-'''
 
 def get_factors(numbers : list) -> dict:
     factors = {}
@@ -126,56 +107,83 @@ def try_multiple(number : int, numbers_tracker : list, multiples : dict):
             best = multiple
     return best
 
-def recursive_check(number : int, numbers_tracker : list, factors : dict, multiples : dict, primes : list, no_primes : list, series : list) -> dict and list:
-    #median = st.median(numbers_tracker)
-    #number_done = False
+def recursive_check(number : int, numbers_tracker : list, factors : dict, multiples : dict, primes : list, no_primes : list, series : list) -> list and list:
     best = 0
     for factor in factors[f'{number}']:
         curr = try_factor(factor, numbers_tracker, factors)
-        print('factor', factor, 'curr', curr, 'num_tracker', numbers_tracker)
+        #print('factor', factor, 'curr', curr, 'num_tracker', numbers_tracker)
         if curr > best and curr in numbers_tracker:
             best = curr
     if best != 0:
         ind = numbers_tracker.index(best)
         numbers_tracker.pop(ind)
-        #del(numbers_tracker[ind])
         series.append(best)
-        print('factor del', 'best', best, 'series', series, 'num_tracker', numbers_tracker)
-        recursive_check(best, numbers_tracker, factors, multiples, primes, no_primes, series)
+        #print('factor del', 'best', best, 'series', series, 'num_tracker', numbers_tracker)
+        numbers_tracker, series = recursive_check(best, numbers_tracker, factors, multiples, primes, no_primes, series)
     elif best == 0:
         for multiple in multiples[f'{number}']:
             curr = try_multiple(multiple, numbers_tracker, multiples)
-            print('multiple', multiple, 'curr', curr, 'num_tracker', numbers_tracker)
+            #print('multiple', multiple, 'curr', curr, 'num_tracker', numbers_tracker)
+            if curr > best and curr in numbers_tracker:
+                best = curr
+                break
+        if best != 0:
+            ind = numbers_tracker.index(best)
+            numbers_tracker.pop(ind)
+            series.append(best)
+            #print('multiple del', 'best', best, 'series', series, 'num_tracker', numbers_tracker)
+            numbers_tracker, series = recursive_check(best, numbers_tracker, factors, multiples, primes, no_primes, series)
+    return numbers_tracker, series
+
+'''def recursive_check2(number : int, numbers_tracker : list, factors : dict, multiples : dict, primes : list, no_primes : list, series : list) -> dict and list:
+    best = 0
+    median = st.median(numbers_tracker)
+    if number > median:
+        for factor in factors[f'{factor}']:
+            curr = try_factor(factor, numbers_tracker, factors)
             if curr > best and curr in numbers_tracker:
                 best = curr
         if best != 0:
             ind = numbers_tracker.index(best)
             numbers_tracker.pop(ind)
-            #del(numbers_tracker[ind])
             series.append(best)
-            print('multiple del', 'best', best, 'series', series, 'num_tracker', numbers_tracker)
-            recursive_check(best, numbers_tracker, factors, multiples, primes, no_primes, series)
-    return numbers_tracker, series
+            recursive_chec'''
+
+'''def recursive_check_multiples(number : int, numbers_tracker : list, factors : dict, multiples : dict, primes : list, no_primes : list, series : list) -> dict and list:
+    best = 0
+    for multiple in multiples[f'{number}']:
+        curr = try_multiple(multiple, numbers_tracker, multiples)
+        #print('factor', factor, 'curr', curr, 'num_tracker', numbers_tracker)
+        if curr > best and curr in numbers_tracker:
+            best = curr
+    if best != 0:
+        ind = numbers_tracker.index(best)
+        numbers_tracker.pop(ind)
+        series.append(best)
+        #print('factor del', 'best', best, 'series', series, 'num_tracker', numbers_tracker)
+        recursive_check_multiples(best, numbers_tracker, factors, multiples, primes, no_primes, series)
+    elif best == 0:
+        for factor in factors[f'{number}']:
+            curr = try_factor(factor, numbers_tracker, factors)
+            #print('multiple', multiple, 'curr', curr, 'num_tracker', numbers_tracker)
+            if curr > best and curr in numbers_tracker:
+                best = curr
+        if best != 0:
+            ind = numbers_tracker.index(best)
+            numbers_tracker.pop(ind)
+            series.append(best)
+            #print('multiple del', 'best', best, 'series', series, 'num_tracker', numbers_tracker)
+            recursive_check_factors(best, numbers_tracker, factors, multiples, primes, no_primes, series)
+    return numbers_tracker, series'''
 
 def best_series(numbers : list, factors : dict, multiples : dict, primes : list, no_primes : list) -> list:
-    #finished = False
-    #counter = 0
-    all_tracker = {}
-    #current_best = []
-
-    '''while counter <= len(numbers) and not finished:
-        current = []
-        number_best = []
-        counter += 1'''
-    
-    '''series = {'9' : [1,9,3,6,2,8,4], }'''
-    
+    all_tracker = {}    
     for number in numbers:
         numbers_tracker = numbers.copy()
         series = []
         tracker, best = recursive_check(number, numbers_tracker, factors, multiples, primes, no_primes, series)
         all_tracker[f'{number}'] = best
-        print('Done with', number)
+        #print('Done with', number)
     return all_tracker
 
 numbers = list(np.arange(1, max_cutoff + 1))
@@ -183,27 +191,13 @@ numbers = list(np.arange(1, max_cutoff + 1))
 no_primes, primes = remove_primes(numbers)
 
 print(f'Starting Numbers: {numbers}')
-#print(f'No Primes: {no_primes} {len(no_primes)}')
-#print(f'Primes: {primes} {len(primes)}')
+print(f'No Primes: {no_primes} {len(no_primes)}')
 
-'''
-final = []
-next_list = numbers.copy()
-for track in range(max_cutoff):
-    length_before = len(next_list)
-    next_list = add_remove_next(next_list, no_primes, primes)
-    length_after = len(next_list)
-    if length_before == length_after:
-        break
-    
-print(next_list)
-'''
 factors = get_factors(numbers)
 multiples = get_multiples(numbers)
 print('Factors: ', factors)
 print('Multiples: ', multiples)
 
-#number = random.randint(1,len(numbers))
 summary = best_series(numbers, factors, multiples, primes, no_primes)
 best_num = 0
 best_series = []
