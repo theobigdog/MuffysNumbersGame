@@ -68,7 +68,7 @@ is used to split the number list into two returned lists of primes and non-prime
 @params
 @current_list: list of all integers from 1 to max_cutoff, inclusive
 '''
-def remove_primes(current_list : list) -> list:
+def remove_primes(current_list : list) -> list and list:
     full_prime_nums = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, #### Just going through 1200.  Gets the point across!
         31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 
         73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 
@@ -138,7 +138,7 @@ the HIGHEST FACTOR from the list given, that is also in the numbers_tracker
 @numbers_tracker: tracks all numbers, and determines if the current factor should be skipped or evaluated
 @factors: dictionary of all factors, for all numbers in the original, given list
 '''
-def try_factor(number : int, numbers_tracker : list, factors : dict):
+def try_factor(number : int, numbers_tracker : list, factors : dict) -> int:
     best = 0
     for factor in factors[f'{number}']:
         if factor in numbers_tracker:
@@ -156,7 +156,7 @@ will be the returned value
 @numbers_tracker: the list of integers that are still available
 @multiples: dictionary of all acceptable multiples for all numbers in the initial list
 '''
-def try_multiple(number : int, numbers_tracker : list, multiples : dict):
+def try_multiple(number : int, numbers_tracker : list, multiples : dict) -> int:
     best = 0
     for multiple in multiples[f'{number}']:
         if multiple in numbers_tracker:
@@ -238,7 +238,7 @@ original list, returning this list as series
 @number: the current number being evaluated
 @numbers_tracker: list to track the currently-available numbers from the original list
 @factors: dictionary of all the factors of every number from the original list
-@multiples: dictionary of all the multiples of every number from the original list, with max_cutoff being the highest multiples allowed
+@multiples: dictionary of all the multiples of every number from the original list, with max_cutoff being the highest multiple allowed
 @primes: list of all the prime numbers from the original list
 @no-primes: list of all the non-prime numbers from the original list
 @series: list of the current "best" series for the current number being evaluated
@@ -246,8 +246,10 @@ original list, returning this list as series
 def series_generation(number : int, numbers_tracker : list, factors : dict, multiples : dict, primes : list, no_primes : list, series : list) -> list and list:
     try:
         median = st.median(numbers_tracker)
+        print(f'{number} peep')
     except:
         median = number
+        print('growl')
     if number > median:
         best = check_factors(number, numbers_tracker, factors)
         if best != 0:
@@ -276,7 +278,7 @@ determine the best series of numbers for each one.  This list of dictionaries is
 @primes: list of all prime numbers from the original list of numbers
 @no_primes: list of all non-prime numbers from the original list of numbers
 '''    
-def best_series(numbers : list, factors : dict, multiples : dict, primes : list, no_primes : list) -> list:
+def best_series(numbers : list, factors : dict, multiples : dict, primes : list, no_primes : list) -> dict:
     all_tracker = {}    
     for number in numbers:
         numbers_tracker = numbers.copy()
