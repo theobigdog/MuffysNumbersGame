@@ -246,10 +246,8 @@ original list, returning this list as series
 def series_generation(number : int, numbers_tracker : list, factors : dict, multiples : dict, primes : list, no_primes : list, series : list) -> list and list:
     try:
         median = st.median(numbers_tracker)
-        print(f'{number} peep')
     except:
         median = number
-        print('growl')
     if number > median:
         best = check_factors(number, numbers_tracker, factors)
         if best != 0:
